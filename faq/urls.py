@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.Index.as_view()),
     path('index/<slug:name>/', views.Index.as_view()),
+    path('search/',views.Search.as_view(), name='search')
     # path('add_ddr/', views.Ddr.as_view()),
 ]

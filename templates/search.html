@@ -1,0 +1,68 @@
+{% extends  'index.html' %}
+
+{% block display %}
+    <div class="panel-heading ">
+
+        <p>搜索结果共<span style="color: red; font-weight: bold">{{ ddr_queryset|length }}</span>条</p>
+    </div>
+    <div style="margin:0 0 0 10px">
+        <table class="table table-hover table-striped table-condensed">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Question</th>
+                <th>Answers</th>
+                <th>回复人</th>
+                <th>创建人</th>
+                <th>创建日期</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ddr_obj in ddr_queryset %}
+                <tr>
+                    <!-- <td>{{ ddr_obj.pk }}</td> -->
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ ddr_obj.question|safe }}</td>
+                    <td>{{ ddr_obj.answers }}</td>
+                    <td>{{ ddr_obj.replier }}</td>
+                    <td>{{ ddr_obj.creator }}</td>
+                    <td>{{ ddr_obj.create_time|date:'Y-m-d' }}</td>
+                    <td>
+                        <a href="" class="btn btn-primary btn-xs">编辑</a>
+                        <a href="" class="btn btn-danger btn-xs">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation" style="text-align: center">
+            <ul class="pagination">
+                <li>
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="active"><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li><a href="#">6</a></li>
+                <li><a href="#">7</a></li>
+                <li><a href="#">8</a></li>
+                <li><a href="#">9</a></li>
+                <li><a href="#">10</a></li>
+                <li>
+                    <a href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+
+    </div>
+{% endblock %}

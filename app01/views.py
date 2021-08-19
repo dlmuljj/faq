@@ -4,11 +4,9 @@ from app01 import models
 from app01.models import DDR, Serdes, U2, U3, Pll, Hdmi, Dp
 from app01.models import TVSensor, MIPI, SARADC, VDAC, Package
 # Create your views here.
+import re
+
 class Index(View):
-
-
-
-
 
     def get(self, request,name=None):
 
@@ -55,39 +53,26 @@ class Index(View):
 
 
 
-class Ddr(View):
-    def get(self, request):
-        import os, sys
-        from openpyxl import Workbook
-        from openpyxl import load_workbook
+class Search(View):
+    def get(self,request):
+        table_list = [DDR, Serdes, U2, U3, Pll, Hdmi, Dp, TVSensor, MIPI, SARADC, VDAC, Package]
+        name_list = ['DDR', 'Serdes', 'U2', 'U3', 'PLL', 'HDMI', 'DP', 'TVSensor', 'MIPI', 'SARADC', 'VDAC', 'Package']
+        len_list = []
+        ddr_queryset = []
 
-        # os.chdir(sys.path[0])
+        val = request.GET.get('val')
+        print(f'查询内容:{val}')
 
-        module_dir = os.path.dirname(__file__)
-        file_path = os.path.join(module_dir,'faq_1.xlsx')
+        for item in table_list:
+            len_list.append(item.objects.count())
+            obj_rst = item.objects.filter(question__contains=val)
+            if obj_rst is not None:
+                for obj in obj_rst:
+                    a_rst = re.findall(val, obj.question, flags=re.IGNORECASE)
+                    for a in set(a_rst):
+                        obj.question = obj.question.replace(a,f'<span style="color: red; font-weight: bold">{a}</span>')
+                    ddr_queryset.append(obj)
 
-        wb = Workbook()
-        wb = load_workbook(file_path)
-        # print(wb.sheetnames)
-        ws_ddr = wb.get_sheet_by_name('DDR')
-        # print(ws_ddr.max_row)
-        # print('ASDF')
-        models.DDR.objects.all().delete()
-        cnt = 1
-        for row in ws_ddr.iter_rows(min_row=2,max_col=5, max_row=32):
-            col_list = []
-            for cell in row:
-                col_list.append(cell.value)
-            print('-------'*20)
-            print(type(col_list[4]))
-            print(col_list[4])
-            print('-------'*20)
-            models.DDR.objects.create(question=col_list[0],
-                                    answers = col_list[1],
-                                    replier = col_list[2],
-                                    creator = col_list[3],
-                                    # create_time = col_list[4],  
-            )
-            print(f'存储第{cnt}个数据')
-            cnt += 1    
-        return HttpResponse('done')
+        rst_list = dict(zip(name_list, len_list))
+
+        return render(request,'search.html',locals())
